@@ -157,7 +157,7 @@ export function UserPage({ page }: UserPageProps) {
               rel="noopener noreferrer"
               className="hover:underline text-[var(--text-color)]"
             >
-              Made with pmo.lol
+              made with pmo.lol
             </a>
           </p>
         </div>
