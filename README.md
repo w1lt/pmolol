@@ -1,13 +1,9 @@
-# linktree but Better
-
 A customizable, open-source alternative to Linktree, allowing users to create a personalized page with multiple links and content blocks.
 
 ## technologies
 
 - **Core:** Next.js, TypeScript, Prisma, PostgreSQL, NextAuth.js
 - **UI:** Tailwind CSS, shadcn/ui, Lucide React
-
-## getting Started
 
 ### pre reqs
 
