@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  Suspense,
 } from "react";
 import { useRouter } from "next/navigation";
 // Import Prisma types - these will be available after prisma generate
@@ -99,6 +100,14 @@ const colorPresets = [
   },
 ];
 
+// Define skeleton outside or as a memoized constant if used in multiple places with same style
+const iconSkeleton = (size: number = 20, extraClass: string = "") => (
+  <span
+    style={{ width: size, height: size }}
+    className={`inline-block align-middle animate-pulse bg-muted rounded ${extraClass}`}
+  ></span>
+);
+
 export function PageEditor({ initialData }: PageEditorProps) {
   const router = useRouter();
 
@@ -154,6 +163,11 @@ export function PageEditor({ initialData }: PageEditorProps) {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSaveChanges = useCallback(async () => {
     if (!hasPendingPageChanges && !hasPendingBlocksChanges) {
@@ -483,36 +497,47 @@ export function PageEditor({ initialData }: PageEditorProps) {
               </div>
 
               <div className="space-y-4">
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                  modifiers={[restrictToVerticalAxis]}
-                >
-                  <SortableContext
-                    items={contentBlocks.map((block) => block.id)}
-                    strategy={verticalListSortingStrategy}
+                {typeof window !== "undefined" && mounted && (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                    modifiers={[restrictToVerticalAxis]}
                   >
-                    {contentBlocks.map((block) => (
-                      <SortableContentBlock
-                        key={block.id}
-                        block={block}
-                        onDelete={deleteContentBlock}
-                        onChange={handleContentBlockChange}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
+                    <SortableContext
+                      items={contentBlocks.map((block) => block.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {contentBlocks.map((block) => (
+                        <SortableContentBlock
+                          key={block.id}
+                          block={block}
+                          onDelete={deleteContentBlock}
+                          onChange={handleContentBlockChange}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                )}
 
-                {contentBlocks.length === 0 && (
+                {/* Message for when DND is not ready or no blocks */}
+                {(!mounted || contentBlocks.length === 0) && (
                   <div className="text-center py-12 border-2 border-dashed rounded-md">
-                    <p className="text-muted-foreground">
-                      No content yet. Add your first block!
-                    </p>
+                    {contentBlocks.length === 0 && !mounted && (
+                      <p className="text-muted-foreground mb-4">
+                        Loading editor...
+                      </p>
+                    )}
+                    {contentBlocks.length === 0 && mounted && (
+                      <p className="text-muted-foreground">
+                        No content yet. Add your first block!
+                      </p>
+                    )}
                     <Button
                       onClick={() => addContentBlock(ContentType.LINK)}
                       variant="outline"
                       className="mt-4 mr-2"
+                      disabled={!mounted} // Disable if not mounted
                     >
                       <LinkIcon className="h-4 w-4 mr-2" /> Add Link
                     </Button>
@@ -520,6 +545,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                       onClick={() => addContentBlock(ContentType.TEXT)}
                       variant="outline"
                       className="mt-4 mr-2"
+                      disabled={!mounted}
                     >
                       <Type className="h-4 w-4 mr-2" /> Add Text
                     </Button>
@@ -527,6 +553,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                       onClick={() => addContentBlock(ContentType.HEADER)}
                       variant="outline"
                       className="mt-4"
+                      disabled={!mounted}
                     >
                       <Heading1 className="h-4 w-4 mr-2" /> Add Header
                     </Button>
@@ -629,10 +656,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <DynamicLucideIcon
-                                          name={block.icon}
-                                          className="text-xl text-white"
-                                        />
+                                        <Suspense
+                                          fallback={iconSkeleton(20, "text-xl")}
+                                        >
+                                          <DynamicLucideIcon
+                                            name={block.icon}
+                                            className="text-xl text-white"
+                                            key={`preview-content-${block.id}-${block.icon}`}
+                                          />
+                                        </Suspense>
                                       )}
                                     </div>
                                   </div>
@@ -873,10 +905,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <DynamicLucideIcon
-                                          name={block.icon}
-                                          className="text-xl text-white"
-                                        />
+                                        <Suspense
+                                          fallback={iconSkeleton(20, "text-xl")}
+                                        >
+                                          <DynamicLucideIcon
+                                            name={block.icon}
+                                            className="text-xl text-white"
+                                            key={`preview-appearance-${block.id}-${block.icon}`}
+                                          />
+                                        </Suspense>
                                       )}
                                     </div>
                                   </div>
@@ -1094,10 +1131,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <DynamicLucideIcon
-                                          name={block.icon}
-                                          className="text-xl text-white"
-                                        />
+                                        <Suspense
+                                          fallback={iconSkeleton(20, "text-xl")}
+                                        >
+                                          <DynamicLucideIcon
+                                            name={block.icon}
+                                            className="text-xl text-white"
+                                            key={`preview-settings-${block.id}-${block.icon}`}
+                                          />
+                                        </Suspense>
                                       )}
                                     </div>
                                   </div>
@@ -1180,6 +1222,8 @@ function SortableContentBlock({
     setIsIconPickerOpen(false);
   };
 
+  const buttonIconSize = 20; // h-5 w-5 translates to 20px
+
   return (
     <div ref={setNodeRef} style={style} className="touch-none">
       <Card className="border shadow-sm">
@@ -1242,14 +1286,23 @@ function SortableContentBlock({
                         onClick={() => setIsIconPickerOpen(true)}
                         className="flex-grow justify-start text-left px-3"
                       >
-                        {block.icon ? (
-                          <DynamicLucideIcon
-                            name={block.icon}
-                            className="h-5 w-5 mr-2 flex-shrink-0"
-                          />
-                        ) : (
-                          <ImageIcon className="h-5 w-5 mr-2 text-muted-foreground flex-shrink-0" />
-                        )}
+                        <Suspense
+                          fallback={iconSkeleton(
+                            buttonIconSize,
+                            "mr-2 flex-shrink-0"
+                          )}
+                        >
+                          {block.icon ? (
+                            <DynamicLucideIcon
+                              name={block.icon}
+                              className="h-5 w-5 mr-2 flex-shrink-0"
+                              key={`editor-${block.id}-${block.icon}`}
+                              size={buttonIconSize} // Pass size
+                            />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 mr-2 text-muted-foreground flex-shrink-0" />
+                          )}
+                        </Suspense>
                         <span className="truncate">
                           {block.icon ? block.icon : "Choose Icon"}
                         </span>
