@@ -3,9 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { LogOut, Plus } from "lucide-react";
-import { SignOutButton } from "@/components/auth/SignOutButton";
 import { useSession } from "next-auth/react";
 
 export function MainNav() {
@@ -15,12 +12,6 @@ export function MainNav() {
   const isAuthenticated = !!session?.user;
 
   const routes = [
-    {
-      href: "/",
-      label: "Home",
-      active: pathname === "/",
-      public: true,
-    },
     {
       href: "/dashboard",
       label: "Dashboard",
@@ -57,17 +48,6 @@ export function MainNav() {
           </Link>
         );
       })}
-      {isAuthenticated ? (
-        <SignOutButton>
-          <Button variant="ghost" size="icon">
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </SignOutButton>
-      ) : (
-        <Link href="/signin">
-          <Button>Sign In</Button>
-        </Link>
-      )}
     </div>
   );
 }
