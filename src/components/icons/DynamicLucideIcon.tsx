@@ -42,26 +42,11 @@ const DynamicLucideIcon: React.FC<CustomIconProps> = ({
     />
   ),
   className,
-  size = 20, // Default size, can be overridden by props
+  size = 20,
   ...props
 }) => {
-  // If no name is provided, render nothing or a placeholder if desired.
-  // For now, let IconRenderer handle it to show a fallback if name is an invalid non-empty string.
-  // If name is explicitly null/undefined, IconRenderer will show fallback.
-  // To render absolutely nothing if name is null/undefined, add a check here:
-  // if (!name) return null;
-
   return (
-    <Suspense
-      fallback={
-        <span
-          style={{ width: size, height: size }}
-          className={`inline-block animate-pulse bg-muted rounded ${
-            className || ""
-          }`}
-        ></span>
-      }
-    >
+    <Suspense fallback={<span>L...</span>}>
       <IconRenderer
         iconName={name || ""}
         fallback={fallback}
