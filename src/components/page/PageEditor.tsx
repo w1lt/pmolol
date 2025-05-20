@@ -175,6 +175,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
     setMounted(true);
   }, []);
 
+  const [rootUrl, setRootUrl] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setRootUrl(window.location.origin);
+    }
+  }, []);
+
   const handleSaveChanges = useCallback(async () => {
     if (!hasPendingPageChanges && !hasPendingBlocksChanges) {
       toast.info("No changes to save.");
@@ -566,17 +573,18 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 <div className="border rounded-md p-4 bg-card">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-medium">
+                      {rootUrl}
                       {previewUrl.startsWith("/")
                         ? previewUrl
                         : `/${previewUrl}`}
                     </p>
                     <Button variant="ghost" size="sm" asChild>
                       <a
-                        href={
+                        href={`${rootUrl}${
                           previewUrl.startsWith("/")
                             ? previewUrl
                             : `/${previewUrl}`
-                        }
+                        }`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -815,17 +823,18 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 <div className="border rounded-md p-4 bg-card">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-medium">
+                      {rootUrl}
                       {previewUrl.startsWith("/")
                         ? previewUrl
                         : `/${previewUrl}`}
                     </p>
                     <Button variant="ghost" size="sm" asChild>
                       <a
-                        href={
+                        href={`${rootUrl}${
                           previewUrl.startsWith("/")
                             ? previewUrl
                             : `/${previewUrl}`
-                        }
+                        }`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1083,17 +1092,18 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 <div className="border rounded-md p-4 bg-card">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-medium">
+                      {rootUrl}
                       {previewUrl.startsWith("/")
                         ? previewUrl
                         : `/${previewUrl}`}
                     </p>
                     <Button variant="ghost" size="sm" asChild>
                       <a
-                        href={
+                        href={`${rootUrl}${
                           previewUrl.startsWith("/")
                             ? previewUrl
                             : `/${previewUrl}`
-                        }
+                        }`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
