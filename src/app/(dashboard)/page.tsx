@@ -19,9 +19,6 @@ export default function Home() {
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
-        <Link href="#examples" className="text-sm font-semibold leading-6">
-          See examples <span aria-hidden="true">→</span>
-        </Link>
       </div>
 
       <div className="mt-20 max-w-5xl">
