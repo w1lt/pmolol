@@ -24,7 +24,7 @@ type PageWithContentAndUser = Prisma.PageGetPayload<{
       };
     };
   };
-}>;
+}> & { showWatermark?: boolean }; // Explicitly add showWatermark
 
 type UserPageProps = {
   page: PageWithContentAndUser; // Use the refined type
@@ -148,18 +148,20 @@ export function UserPage({ page }: UserPageProps) {
       </div>
 
       {/* Footer */}
-      <div className="pt-12 text-center text-xs opacity-60">
-        <p>
-          <a
-            href="https://pmo.lol" // Link to your site
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline text-[var(--text-color)]"
-          >
-            Made with pmo.lol
-          </a>
-        </p>
-      </div>
+      {page.showWatermark !== false && ( // Render if true or undefined (for backwards compatibility if field doesn't exist on old pages)
+        <div className="pt-12 text-center text-xs opacity-60">
+          <p>
+            <a
+              href="https://pmo.lol" // Link to your site
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline text-[var(--text-color)]"
+            >
+              Made with pmo.lol
+            </a>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function Home() {
         multiple links with a single URL, customize colors, fonts, and more.
       </p>
       <div className="mt-10 flex items-center justify-center gap-x-6">
-        <Link href="/signin">
+        <Link href="/edit">
           <Button size="lg">
             Get started
             <ArrowRight className="ml-2 h-4 w-4" />

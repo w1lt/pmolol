@@ -19,6 +19,7 @@ export type UpdatePageParams = {
   textColor?: string;
   accentColor?: string;
   aliases?: string[];
+  showWatermark?: boolean;
 };
 
 // Type for a single content block being sent from the client
@@ -136,7 +137,10 @@ export async function updatePageContentBlocks({
       title: title || null,
       url: type === ContentType.LINK ? url || null : null,
       icon: type === ContentType.LINK ? icon || null : null,
-      textContent: type === ContentType.TEXT ? textContent || null : null,
+      textContent:
+        type === ContentType.TEXT || type === ContentType.HEADER
+          ? textContent || null
+          : null,
       pageId,
     };
 
@@ -155,7 +159,10 @@ export async function updatePageContentBlocks({
           title: title || null,
           url: type === ContentType.LINK ? url || null : null,
           icon: type === ContentType.LINK ? icon || null : null,
-          textContent: type === ContentType.TEXT ? textContent || null : null,
+          textContent:
+            type === ContentType.TEXT || type === ContentType.HEADER
+              ? textContent || null
+              : null,
         },
       });
     }

@@ -39,6 +39,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Trash2,
   ExternalLink,
@@ -63,6 +64,7 @@ import IconPicker from "../icons/IconPicker";
 type PageEditorProps = {
   initialData: Omit<PrismaPage, "profileImage"> & {
     contentBlocks: PrismaContentBlock[];
+    showWatermark?: boolean;
   };
 };
 
@@ -125,24 +127,28 @@ export function PageEditor({ initialData }: PageEditorProps) {
     createdAt,
     updatedAt,
     aliases,
+    showWatermark,
   } = initialData;
 
-  const initialPageValues: Omit<PrismaPage, "profileImage" | "contentBlocks"> =
-    {
-      id,
-      slug,
-      title,
-      description,
-      bannerImage,
-      backgroundColor,
-      textColor,
-      accentColor,
-      fontFamily,
-      userId,
-      createdAt,
-      updatedAt,
-      aliases,
-    };
+  const initialPageValues: Omit<
+    PrismaPage,
+    "profileImage" | "contentBlocks"
+  > & { showWatermark?: boolean } = {
+    id,
+    slug,
+    title,
+    description,
+    bannerImage,
+    backgroundColor,
+    textColor,
+    accentColor,
+    fontFamily,
+    userId,
+    createdAt,
+    updatedAt,
+    aliases,
+    showWatermark: typeof showWatermark === "boolean" ? showWatermark : true,
+  };
 
   const [page, setPage] = useState(initialPageValues);
   const [contentBlocks, setContentBlocks] = useState<PrismaContentBlock[]>(
@@ -213,6 +219,10 @@ export function PageEditor({ initialData }: PageEditorProps) {
             JSON.stringify(initialData.aliases) && {
             aliases: page.aliases,
           }),
+          ...(typeof page.showWatermark === "boolean" &&
+            page.showWatermark !== (initialData.showWatermark ?? true) && {
+              showWatermark: page.showWatermark,
+            }),
         };
         if (Object.keys(pageDataToSave).length > 1) {
           await updatePage(pageDataToSave);
@@ -303,9 +313,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
   const handlePageChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     if (name === "slug") setPreviewUrl(`/${value}`);
-    setPage((prev) => ({ ...prev, [name]: value }));
+
+    if (type === "checkbox") {
+      const { checked } = e.target as HTMLInputElement;
+      setPage((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setPage((prev) => ({ ...prev, [name]: value }));
+    }
     setHasPendingPageChanges(true);
   };
 
@@ -993,28 +1009,70 @@ export function PageEditor({ initialData }: PageEditorProps) {
                   <div>
                     <Label htmlFor="aliases">
                       URL Aliases{" "}
-                      <span className="text-muted-foreground">(optional)</span>
+                      <span className="text-muted-foreground">
+                        (optional, up to 3)
+                      </span>
                     </Label>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Add additional URLs that redirect to your page. Enter one
-                      alias per line.
+                      Add additional URLs that redirect to your page.
                     </p>
-                    <Textarea
-                      id="aliases"
-                      name="aliases"
-                      value={(page.aliases || []).join("\n")}
-                      onChange={(e) => {
-                        const aliasesArray = e.target.value
-                          .split("\n")
-                          .map((s) => s.trim())
-                          .filter(Boolean);
-                        setPage((prev) => ({ ...prev, aliases: aliasesArray }));
-                        setHasPendingPageChanges(true);
-                      }}
-                      className="mt-1 min-h-[100px] font-mono text-sm"
-                      placeholder="example1\nexample2"
-                    />
+                    <div className="space-y-2">
+                      {[0, 1, 2].map((index) => (
+                        <Input
+                          key={`alias-${index}`}
+                          id={`alias-${index}`}
+                          name={`alias-${index}`}
+                          value={(page.aliases || [])[index] || ""}
+                          onChange={(e) => {
+                            const newAliases = [...(page.aliases || [])];
+                            // Ensure array has enough elements up to current index, padded with empty strings if necessary
+                            while (newAliases.length <= index) {
+                              newAliases.push("");
+                            }
+                            newAliases[index] = e.target.value.trim();
+                            // Filter out empty strings at the end, but keep initial empty strings if user is editing them
+                            // This logic ensures that if a user clears an input, it becomes an empty string in the array
+                            // and then we filter out truly empty aliases before saving or processing.
+                            // For the state, we want to keep them to represent the input fields.
+                            setPage((prev) => ({
+                              ...prev,
+                              aliases: newAliases.filter(
+                                (alias) =>
+                                  alias !== "" ||
+                                  newAliases
+                                    .slice(index + 1)
+                                    .some((a) => a !== "")
+                              ),
+                            }));
+                            setHasPendingPageChanges(true);
+                          }}
+                          className="font-mono text-sm"
+                          placeholder={`your-alias-${index + 1}`}
+                        />
+                      ))}
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Preferences</h2>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="showWatermark"
+                    name="showWatermark"
+                    checked={page.showWatermark}
+                    onCheckedChange={(checked: boolean) => {
+                      setPage((prev) => ({ ...prev, showWatermark: checked }));
+                      setHasPendingPageChanges(true);
+                    }}
+                  />
+                  <Label
+                    htmlFor="showWatermark"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Show &quot;Made with pmo.lol&quot; watermark on page
+                  </Label>
                 </div>
               </div>
             </div>

@@ -73,6 +73,7 @@ model Page {
   accentColor     String?
   fontFamily      String?
   aliases         String[]  @default([]) // For URL Aliases
+  showWatermark   Boolean   @default(true)
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   contentBlocks   ContentBlock[] // Replaces 'links'
