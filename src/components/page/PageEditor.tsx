@@ -45,6 +45,7 @@ import {
   Type,
   Link as LinkIcon,
   Heading1,
+  ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -54,6 +55,8 @@ import {
 } from "@/lib/actions";
 import type { UpdatePageParams } from "@/lib/actions";
 import Image from "next/image";
+import DynamicLucideIcon from "../icons/DynamicLucideIcon";
+import IconPicker from "../icons/IconPicker";
 
 // Define props type for the PageEditor component
 type PageEditorProps = {
@@ -626,9 +629,10 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <span className="text-xl">
-                                          {block.icon}
-                                        </span>
+                                        <DynamicLucideIcon
+                                          name={block.icon}
+                                          className="text-xl text-white"
+                                        />
                                       )}
                                     </div>
                                   </div>
@@ -640,7 +644,6 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                 <div
                                   key={block.id}
                                   className="p-4 rounded-lg bg-background/20 shadow text-[var(--text-color)]"
-                                  style={{}}
                                 >
                                   {block.title && (
                                     <h2 className="text-xl font-semibold mb-2">
@@ -870,9 +873,10 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <span className="text-xl">
-                                          {block.icon}
-                                        </span>
+                                        <DynamicLucideIcon
+                                          name={block.icon}
+                                          className="text-xl text-white"
+                                        />
                                       )}
                                     </div>
                                   </div>
@@ -884,7 +888,6 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                 <div
                                   key={block.id}
                                   className="p-4 rounded-lg bg-background/20 shadow text-[var(--text-color)]"
-                                  style={{}}
                                 >
                                   {block.title && (
                                     <h2 className="text-xl font-semibold mb-2">
@@ -1091,9 +1094,10 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                         {block.title || "Untitled Link"}
                                       </span>
                                       {block.icon && (
-                                        <span className="text-xl">
-                                          {block.icon}
-                                        </span>
+                                        <DynamicLucideIcon
+                                          name={block.icon}
+                                          className="text-xl text-white"
+                                        />
                                       )}
                                     </div>
                                   </div>
@@ -1105,7 +1109,6 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                 <div
                                   key={block.id}
                                   className="p-4 rounded-lg bg-background/20 shadow text-[var(--text-color)]"
-                                  style={{}}
                                 >
                                   {block.title && (
                                     <h2 className="text-xl font-semibold mb-2">
@@ -1163,11 +1166,18 @@ function SortableContentBlock({
     isDragging,
   } = useSortable({ id: block.id });
 
+  const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 10 : 0,
     opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleIconSelected = (iconName: string) => {
+    onChange(block.id, "icon", iconName);
+    setIsIconPickerOpen(false);
   };
 
   return (
@@ -1222,17 +1232,44 @@ function SortableContentBlock({
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`block-icon-${block.id}`}>
-                      Icon (optional, e.g., emoji or SVG code)
+                    <Label htmlFor={`block-icon-button-${block.id}`}>
+                      Icon (optional)
                     </Label>
-                    <Input
-                      id={`block-icon-${block.id}`}
-                      value={block.icon || ""}
-                      onChange={(e) =>
-                        onChange(block.id, "icon", e.target.value)
-                      }
-                      className="mt-1"
-                      placeholder="✨ or <svg>...</svg>"
+                    <div className="flex items-center gap-2 mt-1">
+                      <Button
+                        id={`block-icon-button-${block.id}`}
+                        variant="outline"
+                        onClick={() => setIsIconPickerOpen(true)}
+                        className="flex-grow justify-start text-left px-3"
+                      >
+                        {block.icon ? (
+                          <DynamicLucideIcon
+                            name={block.icon}
+                            className="h-5 w-5 mr-2 flex-shrink-0"
+                          />
+                        ) : (
+                          <ImageIcon className="h-5 w-5 mr-2 text-muted-foreground flex-shrink-0" />
+                        )}
+                        <span className="truncate">
+                          {block.icon ? block.icon : "Choose Icon"}
+                        </span>
+                      </Button>
+                      {block.icon && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onChange(block.id, "icon", null)}
+                          title="Clear icon"
+                          className="flex-shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                    <IconPicker
+                      isOpen={isIconPickerOpen}
+                      onOpenChange={setIsIconPickerOpen}
+                      onSelectIcon={handleIconSelected}
                     />
                   </div>
                 </>

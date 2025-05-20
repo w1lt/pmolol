@@ -7,6 +7,7 @@ import {
   ContentType,
   Prisma, // Import Prisma namespace for PageGetPayload
 } from "@prisma/client";
+import DynamicLucideIcon from "@/components/icons/DynamicLucideIcon"; // Import at the top
 
 // Define the expected shape of page data including relations
 type PageWithContentAndUser = Prisma.PageGetPayload<{
@@ -105,13 +106,15 @@ export function UserPage({ page }: UserPageProps) {
                       className="block w-full p-4 rounded-xl transition-all duration-150 ease-in-out shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-102 active:scale-98 bg-[var(--accent-color)] "
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-lg truncate">
+                        <span className="font-semibold text-lg truncate text-white">
                           {block.title || "Untitled Link"}
                         </span>
                         {block.icon && (
-                          <span className="text-xl">{block.icon}</span>
-                        )}{" "}
-                        {/* Basic icon display */}
+                          <DynamicLucideIcon
+                            name={block.icon}
+                            className="text-xl text-white"
+                          />
+                        )}
                       </div>
                     </a>
                   </LinkClickTracker>
