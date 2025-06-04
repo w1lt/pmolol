@@ -10,15 +10,7 @@ import { loadSlim } from "tsparticles-slim";
 import type { Container, ISourceOptions } from "tsparticles-engine";
 
 // Move usernames outside component since it's static data
-const usernames = [
-  "will",
-  "creatine",
-  "wowie",
-  "yourname",
-  "johndoe",
-  "husker",
-  "fortnite",
-];
+const usernames = ["will", "jey", "wowie", "yeet", "jpork", "lit", "wut"];
 
 export default function Home() {
   const [currentText, setCurrentText] = useState("");
@@ -165,7 +157,6 @@ export default function Home() {
             pmo.lol/
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               {currentText}
-              <span className="animate-pulse">|</span>
             </span>
           </h1>
 
