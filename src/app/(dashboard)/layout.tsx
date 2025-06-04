@@ -18,13 +18,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <AuthProvider>
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col">
         <Header />
         <Toaster />
-        <div className="px-4 sm:px-24">{children}</div>
+        <main className="flex-1 px-4 sm:px-24">{children}</main>
         <Footer />
-      </AuthProvider>
-    </>
+      </div>
+    </AuthProvider>
   );
 }

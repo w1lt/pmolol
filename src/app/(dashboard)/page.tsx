@@ -170,7 +170,7 @@ export default function Home() {
             {/* URL Input Section */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
               <div className="relative w-full">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 font-mono text-lg pointer-events-none">
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg pointer-events-none opacity-90">
                   pmo.lol/
                 </span>
                 <Input
