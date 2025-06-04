@@ -37,10 +37,10 @@ export default function Home() {
 
   useEffect(() => {
     const currentUsername = usernames[currentIndex];
-    const baseTypingSpeed = isDeleting ? 50 : 75;
+    const baseTypingSpeed = isDeleting ? 75 : 100;
     const randomOffset = Math.random() * 30 - 15; // Random offset between -15ms and +15ms
     const typingSpeed = Math.max(20, baseTypingSpeed + randomOffset); // Ensure minimum 20ms
-    const pauseTime = isDeleting ? 500 : 2000; // Pause longer when word is complete
+    const pauseTime = isDeleting ? 1000 : 5000; // Pause longer when word is complete
 
     const timer = setTimeout(() => {
       if (!isDeleting && currentText === currentUsername) {
@@ -192,7 +192,7 @@ export default function Home() {
                 </span>
                 <Input
                   type="text"
-                  placeholder={`${currentText}`}
+                  placeholder="user"
                   value={pageSlug}
                   onChange={(e) => setPageSlug(e.target.value)}
                   onKeyDown={handleKeyPress}
@@ -202,7 +202,8 @@ export default function Home() {
               <Button
                 size="lg"
                 onClick={handleCreatePage}
-                className="h-12 px-4 text-lg font-semibold group hover:cursor-pointer whitespace-nowrap"
+                disabled={!pageSlug.trim()}
+                className="h-12 px-4 text-lg font-semibold group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Claim
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

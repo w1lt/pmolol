@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { MainNav } from "@/components/navigation/MainNav";
+import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 export function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const user = session?.user;
+  const pathname = usePathname();
 
   return (
     <header className="relative z-50 w-full">
@@ -22,9 +24,37 @@ export function Header() {
           </Link>
 
           <div className="flex items-center space-x-6">
-            <MainNav />
-
             {user && (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    pathname === "/dashboard"
+                      ? "text-black dark:text-white"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/edit"
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    pathname === "/edit"
+                      ? "text-black dark:text-white"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  Edit Page
+                </Link>
+              </>
+            )}
+
+            {status === "loading" ? (
+              // Show a subtle loading placeholder to prevent flash
+              <div className="h-8 w-20 bg-muted/30 rounded animate-pulse" />
+            ) : user ? (
               <Link href="/dashboard" className="group">
                 <Avatar className="h-8 w-8 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-200 group-hover:scale-105">
                   <AvatarImage
@@ -35,6 +65,13 @@ export function Header() {
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
+              </Link>
+            ) : (
+              <Link
+                href="/signin"
+                className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+              >
+                Get Started
               </Link>
             )}
           </div>
