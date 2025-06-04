@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Get Started - pmo.lol",
+  title: "Sign In - pmo.lol",
   description: "Create your personalized link page in seconds",
 };
 

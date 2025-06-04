@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -69,9 +70,10 @@ export function Header() {
             ) : (
               <Link
                 href="/signin"
-                className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                className="group inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg shadow-sm border border-border hover:bg-primary/10 hover:shadow-md"
               >
                 Get Started
+                <ArrowRight className="w-4 h-4" />
               </Link>
             )}
           </div>

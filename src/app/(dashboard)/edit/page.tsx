@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { PageEditor } from "@/components/page/PageEditor";
 
 export const metadata = {
-  title: "Edit Your Page - pmo.lol",
+  title: "Edit - pmo.lol",
   description: "Customize your link page",
 };
 
