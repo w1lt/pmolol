@@ -11,22 +11,33 @@ export function Header() {
   const user = session?.user;
 
   return (
-    <header className="border-b">
-      <div className="flex h-16 items-center px-4 container">
-        <Link href="/" className="font-bold text-xl">
-          pmo.lol
-        </Link>
-        <div className="ml-auto flex items-center space-x-4">
-          <MainNav />
+    <header className="relative z-50 w-full">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm">
+          <Link
+            href="/"
+            className="font-bold text-xl hover:text-primary transition-colors duration-200"
+          >
+            pmo.lol
+          </Link>
 
-          {user && (
-            <Link href="/dashboard">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.image || ""} alt={user.name || "User"} />
-                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-              </Avatar>
-            </Link>
-          )}
+          <div className="flex items-center space-x-6">
+            <MainNav />
+
+            {user && (
+              <Link href="/dashboard" className="group">
+                <Avatar className="h-8 w-8 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-200 group-hover:scale-105">
+                  <AvatarImage
+                    src={user.image || ""}
+                    alt={user.name || "User"}
+                  />
+                  <AvatarFallback className="group-hover:bg-primary/10 transition-colors duration-200">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>

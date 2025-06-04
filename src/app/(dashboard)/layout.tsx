@@ -21,7 +21,7 @@ export default async function RootLayout({
       <AuthProvider>
         <Header />
         <Toaster />
-        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        <div className="px-4 sm:px-24">{children}</div>
       </AuthProvider>
     </>
   );

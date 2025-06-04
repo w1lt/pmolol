@@ -1,49 +1,304 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import {
+  ArrowRight,
+  Link as LinkIcon,
+  BarChart3,
+  Palette,
+  Zap,
+  Shield,
+  Globe,
+} from "lucide-react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
+import Particles from "react-tsparticles";
+import type { Engine } from "tsparticles-engine";
+import { loadSlim } from "tsparticles-slim";
+import type { Container, ISourceOptions } from "tsparticles-engine";
+
+// Move usernames outside component since it's static data
+const usernames = [
+  "will",
+  "creatine",
+  "wowie",
+  "yourname",
+  "johndoe",
+  "husker",
+  "fortnite",
+];
 
 export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-        Your Links, Your Style
-      </h1>
-      <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl">
-        Create a custom link page that matches your style and personality. Share
-        multiple links with a single URL, customize colors, fonts, and more.
-      </p>
-      <div className="mt-10 flex items-center justify-center gap-x-6">
-        <Link href="/edit">
-          <Button size="lg">
-            Get started
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
+  const [currentText, setCurrentText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [pageSlug, setPageSlug] = useState("");
+  const router = useRouter();
 
-      <div className="mt-20 max-w-5xl">
-        <h2 className="text-3xl font-bold mb-8">Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-2">Custom URL</h3>
-            <p className="text-muted-foreground">
-              Choose your own custom URL slug like pmo.lol/yourname
-            </p>
-          </div>
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-2">Unlimited Links</h3>
-            <p className="text-muted-foreground">
-              Add as many links as you need and organize them your way
-            </p>
-          </div>
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-2">Detailed Analytics</h3>
-            <p className="text-muted-foreground">
-              Track views, clicks, and where your visitors are coming from
+  useEffect(() => {
+    const currentUsername = usernames[currentIndex];
+    const baseTypingSpeed = isDeleting ? 50 : 75;
+    const randomOffset = Math.random() * 30 - 15; // Random offset between -15ms and +15ms
+    const typingSpeed = Math.max(20, baseTypingSpeed + randomOffset); // Ensure minimum 20ms
+    const pauseTime = isDeleting ? 500 : 2000; // Pause longer when word is complete
+
+    const timer = setTimeout(() => {
+      if (!isDeleting && currentText === currentUsername) {
+        // Finished typing, start deleting after pause
+        setTimeout(() => setIsDeleting(true), pauseTime);
+      } else if (isDeleting && currentText === "") {
+        // Finished deleting, move to next word
+        setIsDeleting(false);
+        setCurrentIndex((prev) => (prev + 1) % usernames.length);
+      } else if (isDeleting) {
+        // Continue deleting
+        setCurrentText(currentUsername.substring(0, currentText.length - 1));
+      } else {
+        // Continue typing
+        setCurrentText(currentUsername.substring(0, currentText.length + 1));
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [currentText, currentIndex, isDeleting]);
+
+  const particlesInit = useCallback(async (engine: Engine) => {
+    console.log("Particles engine initializing:", engine);
+    await loadSlim(engine);
+  }, []);
+
+  const particlesLoaded = useCallback(async (container?: Container) => {
+    console.log("Particles container loaded:", container);
+  }, []);
+
+  const options: ISourceOptions = useMemo(
+    () => ({
+      background: {
+        color: {
+          value: "transparent",
+        },
+      },
+      fpsLimit: 60,
+      interactivity: {
+        events: {
+          onClick: {
+            enable: true,
+            mode: "push",
+          },
+          onHover: {
+            enable: true,
+            mode: "repulse",
+          },
+        },
+        modes: {
+          push: {
+            quantity: 2,
+          },
+          repulse: {
+            distance: 100,
+            duration: 0.4,
+          },
+        },
+      },
+      particles: {
+        color: {
+          value: "#ffffff",
+        },
+        links: {
+          color: "#ffffff",
+          distance: 150,
+          enable: true,
+          opacity: 0.15,
+          width: 1,
+        },
+        collisions: {
+          enable: true,
+        },
+        move: {
+          direction: "none",
+          enable: true,
+          outModes: {
+            default: "bounce",
+          },
+          random: false,
+          speed: 1.5,
+          straight: false,
+        },
+        number: {
+          density: {
+            enable: true,
+            area: 800,
+          },
+          value: 60,
+        },
+        opacity: {
+          value: 0.2,
+        },
+        shape: {
+          type: "triangle",
+        },
+        size: {
+          value: { min: 1, max: 4 },
+        },
+      },
+      detectRetina: true,
+    }),
+    []
+  );
+
+  const handleCreatePage = () => {
+    // For now, just go to edit page. Later this can check auth and redirect accordingly
+    router.push("/edit");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleCreatePage();
+    }
+  };
+
+  return (
+    <>
+      <Particles
+        id="tsparticles"
+        init={particlesInit}
+        loaded={particlesLoaded}
+        options={options}
+        className="fixed top-0 left-0 w-full h-full z-[-1]"
+      />
+
+      <div className="relative z-10 flex flex-col items-center justify-center py-12">
+        <div className="text-center space-y-8 max-w-4xl mx-auto px-4">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+            pmo.lol/
+            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {currentText}
+              <span className="animate-pulse">|</span>
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl leading-relaxed text-muted-foreground max-w-3xl mx-auto">
+            Create a stunning, personalized link page that reflects your unique
+            style. Share all your important links in one beautiful, customizable
+            space.
+          </p>
+
+          <div className="flex flex-col items-center justify-center gap-6 pt-8">
+            {/* URL Input Section */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
+              <div className="relative w-full">
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 font-mono text-lg pointer-events-none">
+                  pmo.lol/
+                </span>
+                <Input
+                  type="text"
+                  placeholder={`${currentText}`}
+                  value={pageSlug}
+                  onChange={(e) => setPageSlug(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  className="text-lg px-4 py-3 pl-20 h-12 bg-background border border-border rounded-lg shadow-lg"
+                />
+              </div>
+              <Button
+                size="lg"
+                onClick={handleCreatePage}
+                className="h-12 px-4 text-lg font-semibold group hover:cursor-pointer whitespace-nowrap"
+              >
+                Claim
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Choose your custom URL and start building your page
             </p>
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="relative z-10 py-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Everything You Need
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Powerful features to make your link page stand out from the crowd
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <Globe className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Custom URL</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Choose your own memorable URL slug like{" "}
+                <code className="px-2 py-1 bg-muted rounded text-sm">
+                  pmo.lol/yourname
+                </code>
+              </p>
+            </div>
+
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <LinkIcon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Unlimited Links</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Add as many links as you need and organize them exactly how you
+                want
+              </p>
+            </div>
+
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <BarChart3 className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">
+                Detailed Analytics
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Track views, clicks, and understand your audience with
+                comprehensive analytics
+              </p>
+            </div>
+
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <Palette className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Custom Styling</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Personalize colors, fonts, layouts, and themes to match your
+                brand
+              </p>
+            </div>
+
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <Shield className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Fast & Secure</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Lightning-fast loading times with enterprise-grade security
+              </p>
+            </div>
+
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Easy Setup</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Get started in minutes with our intuitive, user-friendly
+                interface
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

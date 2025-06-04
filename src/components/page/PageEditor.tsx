@@ -486,15 +486,24 @@ export function PageEditor({ initialData }: PageEditorProps) {
               <h2 className="text-xl font-semibold">Content Blocks</h2>
               <div className="flex justify-between items-center">
                 <div className="flex gap-2">
-                  <Button onClick={() => addContentBlock(ContentType.LINK)}>
+                  <Button
+                    onClick={() => addContentBlock(ContentType.LINK)}
+                    className="hover:cursor-pointer"
+                  >
                     <LinkIcon className="h-4 w-4 mr-2" />
                     Link
                   </Button>
-                  <Button onClick={() => addContentBlock(ContentType.TEXT)}>
+                  <Button
+                    onClick={() => addContentBlock(ContentType.TEXT)}
+                    className="hover:cursor-pointer"
+                  >
                     <Type className="h-4 w-4 mr-2" />
                     Text
                   </Button>
-                  <Button onClick={() => addContentBlock(ContentType.HEADER)}>
+                  <Button
+                    onClick={() => addContentBlock(ContentType.HEADER)}
+                    className="hover:cursor-pointer"
+                  >
                     <Heading1 className="h-4 w-4 mr-2" />
                     Header
                   </Button>
@@ -1087,7 +1096,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="sticky top-20">
+              <div className="sticky top-3">
                 <h2 className="text-xl font-semibold mb-4">Preview</h2>
                 <div className="border rounded-md p-4 bg-card">
                   <div className="flex items-center justify-between mb-4">
@@ -1279,103 +1288,112 @@ function SortableContentBlock({
       <Card className="border shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-2">
-            <button
-              {...attributes}
-              {...listeners}
-              className="touch-none cursor-grab active:cursor-grabbing p-1 mt-7"
-            >
-              <GripVertical className="h-5 w-5 text-muted-foreground" />
-            </button>
+            <div className="flex flex-col items-center justify-center h-full self-center">
+              <div className="flex flex-col items-center gap-2">
+                {/* Block type indicator with colored badge */}
+                <div className="flex items-center justify-center">
+                  {block.type === ContentType.LINK && (
+                    <div className="bg-blue-100 text-blue-700 p-1.5 rounded-md border border-blue-200">
+                      <LinkIcon className="h-3 w-3" />
+                    </div>
+                  )}
+                  {block.type === ContentType.TEXT && (
+                    <div className="bg-green-100 text-green-700 p-1.5 rounded-md border border-green-200">
+                      <Type className="h-3 w-3" />
+                    </div>
+                  )}
+                  {block.type === ContentType.HEADER && (
+                    <div className="bg-purple-100 text-purple-700 p-1.5 rounded-md border border-purple-200">
+                      <Heading1 className="h-3 w-3" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Grab handle with distinct styling */}
+                <button
+                  {...attributes}
+                  {...listeners}
+                  className="touch-none cursor-grab active:cursor-grabbing p-1.5"
+                >
+                  <GripVertical className="h-4 w-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
 
             <div className="flex-1 space-y-3">
               <div>
-                <Label htmlFor={`block-title-${block.id}`}>
-                  {block.type === ContentType.LINK
-                    ? "Link Title"
-                    : block.type === ContentType.TEXT
-                    ? "Text Block Title (Optional Header)"
-                    : "Header Title"}
-                </Label>
-                <Input
-                  id={`block-title-${block.id}`}
-                  value={block.title || ""}
-                  onChange={(e) => onChange(block.id, "title", e.target.value)}
-                  className="mt-1"
-                  placeholder={
-                    block.type === ContentType.LINK
-                      ? "Enter link title"
-                      : block.type === ContentType.TEXT
-                      ? "Enter optional header for text block"
-                      : "Enter main page title"
-                  }
-                />
+                {block.type === ContentType.LINK ? (
+                  // For links, show title input and icon button in same row
+                  <div className="flex items-center gap-2 mt-1">
+                    <Input
+                      id={`block-title-${block.id}`}
+                      value={block.title || ""}
+                      onChange={(e) =>
+                        onChange(block.id, "title", e.target.value)
+                      }
+                      className="flex-1"
+                      placeholder="Enter link title"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setIsIconPickerOpen(true)}
+                      className="flex-shrink-0"
+                      title={block.icon ? `Icon: ${block.icon}` : "Choose Icon"}
+                    >
+                      <Suspense
+                        fallback={iconSkeleton(buttonIconSize, "flex-shrink-0")}
+                      >
+                        {block.icon ? (
+                          <DynamicLucideIcon
+                            name={block.icon}
+                            className="h-4 w-4"
+                            key={`editor-${block.id}-${block.icon}`}
+                            size={16}
+                          />
+                        ) : (
+                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Suspense>
+                    </Button>
+                  </div>
+                ) : (
+                  // For other block types, show normal input
+                  <Input
+                    id={`block-title-${block.id}`}
+                    value={block.title || ""}
+                    onChange={(e) =>
+                      onChange(block.id, "title", e.target.value)
+                    }
+                    className="mt-1"
+                    placeholder={
+                      block.type === ContentType.TEXT
+                        ? "Enter optional header for text block"
+                        : "Enter main page title"
+                    }
+                  />
+                )}
               </div>
 
+              {/* Icon picker modal for links */}
               {block.type === ContentType.LINK && (
-                <>
-                  <div>
-                    <Label htmlFor={`block-url-${block.id}`}>URL</Label>
-                    <Input
-                      id={`block-url-${block.id}`}
-                      value={block.url || ""}
-                      onChange={(e) =>
-                        onChange(block.id, "url", e.target.value)
-                      }
-                      className="mt-1"
-                      placeholder="https://example.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`block-icon-button-${block.id}`}>
-                      Icon (optional)
-                    </Label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Button
-                        id={`block-icon-button-${block.id}`}
-                        variant="outline"
-                        onClick={() => setIsIconPickerOpen(true)}
-                        className="flex-grow justify-start text-left px-3"
-                      >
-                        <Suspense
-                          fallback={iconSkeleton(
-                            buttonIconSize,
-                            "mr-2 flex-shrink-0"
-                          )}
-                        >
-                          {block.icon ? (
-                            <DynamicLucideIcon
-                              name={block.icon}
-                              className="h-5 w-5 mr-2 flex-shrink-0"
-                              key={`editor-${block.id}-${block.icon}`}
-                              size={buttonIconSize} // Pass size
-                            />
-                          ) : (
-                            <ImageIcon className="h-5 w-5 mr-2 text-muted-foreground flex-shrink-0" />
-                          )}
-                        </Suspense>
-                        <span className="truncate">
-                          {block.icon ? block.icon : "Choose Icon"}
-                        </span>
-                      </Button>
-                      {block.icon && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onChange(block.id, "icon", null)}
-                          title="Clear icon"
-                          className="flex-shrink-0"
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      )}
-                    </div>
-                    <IconPicker
-                      isOpen={isIconPickerOpen}
-                      onOpenChange={setIsIconPickerOpen}
-                      onSelectIcon={handleIconSelected}
-                    />
-                  </div>
-                </>
+                <IconPicker
+                  isOpen={isIconPickerOpen}
+                  onOpenChange={setIsIconPickerOpen}
+                  onSelectIcon={handleIconSelected}
+                />
+              )}
+
+              {block.type === ContentType.LINK && (
+                <div>
+                  <Input
+                    id={`block-url-${block.id}`}
+                    value={block.url || ""}
+                    onChange={(e) => onChange(block.id, "url", e.target.value)}
+                    className="mt-1"
+                    placeholder="https://example.com"
+                  />
+                </div>
               )}
 
               {block.type === ContentType.TEXT && (
@@ -1395,17 +1413,14 @@ function SortableContentBlock({
 
               {block.type === ContentType.HEADER && (
                 <div>
-                  <Label htmlFor={`block-text-${block.id}`}>
-                    Subheading (Optional)
-                  </Label>
-                  <Textarea
+                  <Input
                     id={`block-text-${block.id}`}
                     value={block.textContent || ""}
                     onChange={(e) =>
                       onChange(block.id, "textContent", e.target.value)
                     }
-                    className="mt-1 min-h-[80px]"
-                    placeholder="Enter optional subheading here."
+                    className="mt-1"
+                    placeholder="Optional subheading"
                   />
                 </div>
               )}
@@ -1415,7 +1430,7 @@ function SortableContentBlock({
               variant="ghost"
               size="icon"
               onClick={() => onDelete(block.id)}
-              className="text-destructive hover:text-destructive hover:bg-destructive/10 ml-2 mt-5"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:cursor-pointer "
             >
               <Trash2 className="h-5 w-5" />
             </Button>
