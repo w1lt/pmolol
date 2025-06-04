@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="relative z-50 w-full">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm">
+        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <Link
             href="/"
             className="font-bold text-xl hover:text-primary transition-colors duration-200"

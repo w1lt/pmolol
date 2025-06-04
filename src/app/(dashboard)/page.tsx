@@ -2,15 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  Link as LinkIcon,
-  BarChart3,
-  Palette,
-  Zap,
-  Shield,
-  Globe,
-} from "lucide-react";
+import { ArrowRight, Link as LinkIcon, BarChart3, Globe } from "lucide-react";
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
@@ -229,7 +221,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/50 hover:ring-2 hover:ring-primary/20">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                 <Globe className="w-6 h-6 text-primary" />
               </div>
@@ -242,7 +234,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/50 hover:ring-2 hover:ring-primary/20">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                 <LinkIcon className="w-6 h-6 text-primary" />
               </div>
@@ -253,7 +245,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/50 hover:ring-2 hover:ring-primary/20">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                 <BarChart3 className="w-6 h-6 text-primary" />
               </div>
@@ -263,38 +255,6 @@ export default function Home() {
               <p className="text-muted-foreground leading-relaxed">
                 Track views, clicks, and understand your audience with
                 comprehensive analytics
-              </p>
-            </div>
-
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                <Palette className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4">Custom Styling</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Personalize colors, fonts, layouts, and themes to match your
-                brand
-              </p>
-            </div>
-
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4">Fast & Secure</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Lightning-fast loading times with enterprise-grade security
-              </p>
-            </div>
-
-            <div className="group p-8 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4">Easy Setup</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Get started in minutes with our intuitive, user-friendly
-                interface
               </p>
             </div>
           </div>

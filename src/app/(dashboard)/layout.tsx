@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
 // const inter = Inter({ subsets: ["latin"] });
@@ -22,6 +23,7 @@ export default async function RootLayout({
         <Header />
         <Toaster />
         <div className="px-4 sm:px-24">{children}</div>
+        <Footer />
       </AuthProvider>
     </>
   );
