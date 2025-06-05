@@ -131,10 +131,6 @@
     height: auto;
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
   ::-webkit-scrollbar-thumb {
     background: auto;
     border-radius: auto;
