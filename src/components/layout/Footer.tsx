@@ -15,30 +15,18 @@ export function Footer() {
               pmo.lol
             </Link>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} pmo.lol - All rights reserved.
+              © {new Date().getFullYear()}{" "}
+              <Link
+                href="https://willwhitehead.com/"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+                target="_blank"
+              >
+                Will Whitehead
+              </Link>
             </p>
           </div>
 
-          <div className="flex items-center gap-6 mt-4 sm:mt-0">
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Terms
-            </Link>
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Support
-            </Link>
-          </div>
+          <div className="flex items-center gap-6 mt-4 sm:mt-0"></div>
         </div>
       </div>
     </footer>
