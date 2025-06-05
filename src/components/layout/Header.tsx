@@ -1,17 +1,14 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
-import { useSession } from "next-auth/react";
-import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { HeaderNavigation } from "./HeaderNavigation";
 
-export function Header() {
-  const { data: session, status } = useSession();
+export async function Header() {
+  const session = await getServerSession(authOptions);
   const user = session?.user;
-  const pathname = usePathname();
 
   return (
     <header className="relative z-50 w-full">
@@ -25,37 +22,9 @@ export function Header() {
           </Link>
 
           <div className="flex items-center space-x-6">
-            {user && (
-              <>
-                <Link
-                  href="/dashboard"
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    pathname === "/dashboard"
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/edit"
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    pathname === "/edit"
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  Edit Page
-                </Link>
-              </>
-            )}
+            {user && <HeaderNavigation />}
 
-            {status === "loading" ? (
-              // Show a subtle loading placeholder to prevent flash
-              <div className="h-8 w-20 bg-muted/30 rounded animate-pulse" />
-            ) : user ? (
+            {user ? (
               <Link href="/dashboard" className="group">
                 <Avatar className="h-8 w-8 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-200 group-hover:scale-105">
                   <AvatarImage
