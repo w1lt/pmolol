@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getInitials } from "@/lib/utils";
-import { ArrowRight, User, LogOut } from "lucide-react";
+import { ArrowRight, User, LogOut, BarChart, Edit } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { HeaderNavigation } from "./HeaderNavigation";
@@ -22,7 +22,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 w-full">
       <NavigationProgress />
       <div className="container mx-auto px-4 py-4">
-        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm">
+        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <Link
             href="/"
             className="font-bold text-xl hover:text-primary transition-colors duration-200"
@@ -31,7 +31,12 @@ export async function Header() {
           </Link>
 
           <div className="flex items-center space-x-6">
-            {user && <HeaderNavigation />}
+            {/* Desktop Navigation - Hidden on mobile */}
+            {user && (
+              <div className="hidden md:block">
+                <HeaderNavigation />
+              </div>
+            )}
 
             {user ? (
               <DropdownMenu>
@@ -49,6 +54,30 @@ export async function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
+                  {/* Mobile Navigation Links - Only shown on mobile */}
+                  <div className="md:hidden">
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <BarChart className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/edit"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <Edit className="h-4 w-4" />
+                        Edit Page
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </div>
+
+                  {/* Profile and Logout - Always shown */}
                   <DropdownMenuItem asChild>
                     <Link
                       href="/dashboard"
