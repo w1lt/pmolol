@@ -35,9 +35,9 @@ export function PreviewSection({
 }: PreviewSectionProps) {
   return (
     <div className="lg:col-span-2">
-      <div className="sticky top-22">
+      <div className="sticky top-4">
         <div className="rounded-md pb-4">
-          <div className="flex items-center justify-between mb-4 border rounded-md p-2">
+          <div className="flex items-center justify-between mb-4 border rounded-md px-4 py-2">
             <p className="text-sm font-medium ">
               {rootUrl}
               {previewUrl.startsWith("/") ? previewUrl : `/${previewUrl}`}

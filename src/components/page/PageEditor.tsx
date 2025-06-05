@@ -9,7 +9,6 @@ import React, {
   Suspense,
 } from "react";
 import { useRouter } from "next/navigation";
-// Import Prisma types - these will be available after prisma generate
 import {
   Page as PrismaPage,
   ContentBlock as PrismaContentBlock,
@@ -443,374 +442,368 @@ export function PageEditor({ initialData }: PageEditorProps) {
 
   return (
     <div className="container py-12">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Edit Your Page Content</h1>
-          <p className="text-muted-foreground">
-            Manage your links and text blocks.
-          </p>
-        </div>
-      </div>
+      {/* Main 2-column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Left column - Editing content */}
+        <div className="lg:col-span-3">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+            <div>
+              <h1 className="text-3xl font-bold">Edit Your Page Content</h1>
+              <p className="text-muted-foreground">
+                Manage your links and text blocks.
+              </p>
+            </div>
+          </div>
+          <Tabs defaultValue="content" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="content">Content</TabsTrigger>
+              <TabsTrigger value="appearance">Appearance</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
 
-      <Tabs defaultValue="content" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="appearance">Appearance</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="content">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 space-y-6">
-              <h2 className="text-xl font-semibold">
-                Edit / Add Content Blocks
-              </h2>
-              <div className="flex justify-between items-center ">
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => addContentBlock(ContentType.LINK)}
-                    className="hover:cursor-pointer"
-                  >
-                    <LinkIcon className="h-4 w-4 mr-2" />
-                    Link
-                  </Button>
-                  <Button
-                    onClick={() => addContentBlock(ContentType.TEXT)}
-                    className="hover:cursor-pointer"
-                  >
-                    <Type className="h-4 w-4 mr-2" />
-                    Text
-                  </Button>
-                  <Button
-                    onClick={() => addContentBlock(ContentType.HEADER)}
-                    className="hover:cursor-pointer"
-                  >
-                    <Heading1 className="h-4 w-4 mr-2" />
-                    Header
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {typeof window !== "undefined" && mounted && (
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                    modifiers={[restrictToVerticalAxis]}
-                  >
-                    <SortableContext
-                      items={contentBlocks.map((block) => block.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      {contentBlocks.map((block) => (
-                        <SortableContentBlock
-                          key={block.id}
-                          block={block}
-                          onDelete={deleteContentBlock}
-                          onChange={handleContentBlockChange}
-                        />
-                      ))}
-                    </SortableContext>
-                  </DndContext>
-                )}
-
-                {/* Message for when DND is not ready or no blocks */}
-                {(!mounted || contentBlocks.length === 0) && (
-                  <div className="text-center py-12 border-2 border-dashed rounded-md">
-                    {contentBlocks.length === 0 && !mounted && (
-                      <p className="text-muted-foreground mb-4">
-                        Loading editor...
-                      </p>
-                    )}
-                    {contentBlocks.length === 0 && mounted && (
-                      <p className="text-muted-foreground">
-                        No content yet. Add your first block!
-                      </p>
-                    )}
+            <TabsContent value="content">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold">
+                  Edit / Add Content Blocks
+                </h2>
+                <div className="flex justify-between items-center ">
+                  <div className="flex gap-2">
                     <Button
                       onClick={() => addContentBlock(ContentType.LINK)}
-                      variant="outline"
-                      className="mt-4 mr-2"
-                      disabled={!mounted} // Disable if not mounted
+                      className="hover:cursor-pointer"
                     >
-                      <LinkIcon className="h-4 w-4 mr-2" /> Add Link
+                      <LinkIcon className="h-4 w-4 mr-2" />
+                      Link
                     </Button>
                     <Button
                       onClick={() => addContentBlock(ContentType.TEXT)}
-                      variant="outline"
-                      className="mt-4 mr-2"
-                      disabled={!mounted}
+                      className="hover:cursor-pointer"
                     >
-                      <Type className="h-4 w-4 mr-2" /> Add Text
+                      <Type className="h-4 w-4 mr-2" />
+                      Text
                     </Button>
                     <Button
                       onClick={() => addContentBlock(ContentType.HEADER)}
-                      variant="outline"
-                      className="mt-4"
-                      disabled={!mounted}
+                      className="hover:cursor-pointer"
                     >
-                      <Heading1 className="h-4 w-4 mr-2" /> Add Header
+                      <Heading1 className="h-4 w-4 mr-2" />
+                      Header
                     </Button>
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            <PreviewSection
-              page={page}
-              contentBlocks={contentBlocks}
-              previewUrl={previewUrl}
-              rootUrl={rootUrl}
-            />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="appearance">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 space-y-8">
-              <h2 className="text-xl font-semibold">Page Styling</h2>
-
-              {/* Color Presets Section */}
-              <div>
-                <Label>Color Presets</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-                  {colorPresets.map((preset) => (
-                    <Button
-                      key={preset.name}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => applyColorPreset(preset)}
-                      className="w-full flex flex-col h-auto p-2 justify-start items-start group"
+                <div className="space-y-4">
+                  {typeof window !== "undefined" && mounted && (
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                      modifiers={[restrictToVerticalAxis]}
                     >
-                      <span className="font-medium text-sm mb-1.5">
-                        {preset.name}
-                      </span>
-                      <div className="flex space-x-1.5 w-full">
-                        <div
-                          className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
-                          style={{ backgroundColor: preset.backgroundColor }}
-                        />
-                        <div
-                          className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
-                          style={{ backgroundColor: preset.textColor }}
-                        />
-                        <div
-                          className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
-                          style={{ backgroundColor: preset.accentColor }}
-                        />
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Select a preset or define custom colors below.
-                </p>
-              </div>
+                      <SortableContext
+                        items={contentBlocks.map((block) => block.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {contentBlocks.map((block) => (
+                          <SortableContentBlock
+                            key={block.id}
+                            block={block}
+                            onDelete={deleteContentBlock}
+                            onChange={handleContentBlockChange}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  )}
 
-              <div>
-                <Label htmlFor="fontFamily">Font Family</Label>
-                <Input
-                  id="fontFamily"
-                  name="fontFamily"
-                  value={page.fontFamily || ""}
-                  onChange={handlePageChange}
-                  className="mt-2"
-                  placeholder="e.g., Inter, Roboto, Arial"
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Enter a font name. Ensure it&apos;s a web-safe font or
-                  imported in your project.
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="backgroundColor">Background Color</Label>
-                <Input
-                  id="backgroundColor"
-                  name="backgroundColor"
-                  type="color"
-                  value={page.backgroundColor || "#FFFFFF"}
-                  onChange={handlePageChange}
-                  className="mt-2 h-10"
-                />
-              </div>
-              <div>
-                <Label htmlFor="textColor">Text Color</Label>
-                <Input
-                  id="textColor"
-                  name="textColor"
-                  type="color"
-                  value={page.textColor || "#000000"}
-                  onChange={handlePageChange}
-                  className="mt-2 h-10"
-                />
-              </div>
-              <div>
-                <Label htmlFor="accentColor">
-                  Accent Color (Links/Buttons)
-                </Label>
-                <Input
-                  id="accentColor"
-                  name="accentColor"
-                  type="color"
-                  value={page.accentColor || "#3B82F6"}
-                  onChange={handlePageChange}
-                  className="mt-2 h-10"
-                />
-              </div>
-              <div>
-                <Label htmlFor="bannerImage">Banner Image URL (Optional)</Label>
-                <Input
-                  id="bannerImage"
-                  name="bannerImage"
-                  value={page.bannerImage || ""}
-                  onChange={handlePageChange}
-                  className="mt-2"
-                  placeholder="https://example.com/your-banner.jpg"
-                />
-              </div>
-            </div>
-            <PreviewSection
-              page={page}
-              contentBlocks={contentBlocks}
-              previewUrl={previewUrl}
-              rootUrl={rootUrl}
-            />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Basic Information</h2>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Page Title</Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      value={page.title}
-                      onChange={handlePageChange}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="description">
-                      Description{" "}
-                      <span className="text-muted-foreground">(optional)</span>
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={page.description || ""}
-                      onChange={handlePageChange}
-                      className="mt-2 min-h-[100px]"
-                    />
-                  </div>
+                  {/* Message for when DND is not ready or no blocks */}
+                  {(!mounted || contentBlocks.length === 0) && (
+                    <div className="text-center py-12 border-2 border-dashed rounded-md">
+                      {contentBlocks.length === 0 && !mounted && (
+                        <p className="text-muted-foreground mb-4">
+                          Loading editor...
+                        </p>
+                      )}
+                      {contentBlocks.length === 0 && mounted && (
+                        <p className="text-muted-foreground">
+                          No content yet. Add your first block!
+                        </p>
+                      )}
+                      <Button
+                        onClick={() => addContentBlock(ContentType.LINK)}
+                        variant="outline"
+                        className="mt-4 mr-2"
+                        disabled={!mounted} // Disable if not mounted
+                      >
+                        <LinkIcon className="h-4 w-4 mr-2" /> Add Link
+                      </Button>
+                      <Button
+                        onClick={() => addContentBlock(ContentType.TEXT)}
+                        variant="outline"
+                        className="mt-4 mr-2"
+                        disabled={!mounted}
+                      >
+                        <Type className="h-4 w-4 mr-2" /> Add Text
+                      </Button>
+                      <Button
+                        onClick={() => addContentBlock(ContentType.HEADER)}
+                        variant="outline"
+                        className="mt-4"
+                        disabled={!mounted}
+                      >
+                        <Heading1 className="h-4 w-4 mr-2" /> Add Header
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
+            </TabsContent>
 
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">URL Settings</h2>
+            <TabsContent value="appearance">
+              <div className="space-y-8">
+                <h2 className="text-xl font-semibold">Page Appearance</h2>
+
+                {/* Color Presets Section */}
+                <div>
+                  <Label>Color Presets</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                    {colorPresets.map((preset) => (
+                      <Button
+                        key={preset.name}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => applyColorPreset(preset)}
+                        className="w-full flex flex-col h-auto p-2 justify-start items-start group"
+                      >
+                        <span className="font-medium text-sm mb-1.5">
+                          {preset.name}
+                        </span>
+                        <div className="flex space-x-1.5 w-full">
+                          <div
+                            className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
+                            style={{ backgroundColor: preset.backgroundColor }}
+                          />
+                          <div
+                            className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
+                            style={{ backgroundColor: preset.textColor }}
+                          />
+                          <div
+                            className="h-4 w-1/3 rounded-sm border group-hover:scale-110 transition-transform"
+                            style={{ backgroundColor: preset.accentColor }}
+                          />
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Select a preset or define custom colors below.
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="fontFamily">Font Family</Label>
+                  <Input
+                    id="fontFamily"
+                    name="fontFamily"
+                    value={page.fontFamily || ""}
+                    onChange={handlePageChange}
+                    className="mt-2"
+                    placeholder="e.g., Inter, Roboto, Arial"
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Enter a font name. Ensure it&apos;s a web-safe font or
+                    imported in your project.
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="backgroundColor">Background Color</Label>
+                  <Input
+                    id="backgroundColor"
+                    name="backgroundColor"
+                    type="color"
+                    value={page.backgroundColor || "#FFFFFF"}
+                    onChange={handlePageChange}
+                    className="mt-2 h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="textColor">Text Color</Label>
+                  <Input
+                    id="textColor"
+                    name="textColor"
+                    type="color"
+                    value={page.textColor || "#000000"}
+                    onChange={handlePageChange}
+                    className="mt-2 h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="accentColor">
+                    Accent Color (Links/Buttons)
+                  </Label>
+                  <Input
+                    id="accentColor"
+                    name="accentColor"
+                    type="color"
+                    value={page.accentColor || "#3B82F6"}
+                    onChange={handlePageChange}
+                    className="mt-2 h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="bannerImage">
+                    Banner Image URL (Optional)
+                  </Label>
+                  <Input
+                    id="bannerImage"
+                    name="bannerImage"
+                    value={page.bannerImage || ""}
+                    onChange={handlePageChange}
+                    className="mt-2"
+                    placeholder="https://example.com/your-banner.jpg"
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <div className="space-y-8">
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="slug">Custom URL</Label>
-                    <div className="flex mt-2">
-                      <div className="bg-muted rounded-l-md px-3 py-2 text-sm border border-r-0">
-                        pmo.lol/
-                      </div>
+                  <h2 className="text-xl font-semibold">Page Settings</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Page Title</Label>
                       <Input
-                        id="slug"
-                        name="slug"
-                        value={page.slug}
+                        id="title"
+                        name="title"
+                        value={page.title}
                         onChange={handlePageChange}
-                        className="rounded-l-none"
+                        className="mt-2"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="description">
+                        Description{" "}
+                        <span className="text-muted-foreground">
+                          (optional)
+                        </span>
+                      </Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        value={page.description || ""}
+                        onChange={handlePageChange}
+                        className="mt-2 min-h-[100px]"
                       />
                     </div>
                   </div>
+                </div>
 
-                  <div>
-                    <Label htmlFor="aliases">
-                      URL Aliases{" "}
-                      <span className="text-muted-foreground">
-                        (optional, up to 3)
-                      </span>
-                    </Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Add additional URLs that redirect to your page.
-                    </p>
-                    <div className="space-y-2">
-                      {[0, 1, 2].map((index) => (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">URL Settings</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="slug">Custom URL</Label>
+                      <div className="flex mt-2">
+                        <div className="bg-muted rounded-l-md px-3 py-2 text-sm border border-r-0">
+                          pmo.lol/
+                        </div>
                         <Input
-                          key={`alias-${index}`}
-                          id={`alias-${index}`}
-                          name={`alias-${index}`}
-                          value={(page.aliases || [])[index] || ""}
-                          onChange={(e) => {
-                            const newAliases = [...(page.aliases || [])];
-                            // Ensure array has enough elements up to current index, padded with empty strings if necessary
-                            while (newAliases.length <= index) {
-                              newAliases.push("");
-                            }
-                            newAliases[index] = e.target.value.trim();
-                            // Filter out empty strings at the end, but keep initial empty strings if user is editing them
-                            // This logic ensures that if a user clears an input, it becomes an empty string in the array
-                            // and then we filter out truly empty aliases before saving or processing.
-                            // For the state, we want to keep them to represent the input fields.
-                            setPage((prev) => ({
-                              ...prev,
-                              aliases: newAliases.filter(
-                                (alias) =>
-                                  alias !== "" ||
-                                  newAliases
-                                    .slice(index + 1)
-                                    .some((a) => a !== "")
-                              ),
-                            }));
-                            setHasPendingPageChanges(true);
-                          }}
-                          className="font-mono text-sm"
-                          placeholder={`your-alias-${index + 1}`}
+                          id="slug"
+                          name="slug"
+                          value={page.slug}
+                          onChange={handlePageChange}
+                          className="rounded-l-none"
                         />
-                      ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="aliases">
+                        URL Aliases{" "}
+                        <span className="text-muted-foreground">
+                          (optional, up to 3)
+                        </span>
+                      </Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Add additional URLs that redirect to your page.
+                      </p>
+                      <div className="space-y-2">
+                        {[0, 1, 2].map((index) => (
+                          <Input
+                            key={`alias-${index}`}
+                            id={`alias-${index}`}
+                            name={`alias-${index}`}
+                            value={(page.aliases || [])[index] || ""}
+                            onChange={(e) => {
+                              const newAliases = [...(page.aliases || [])];
+                              // Ensure array has enough elements up to current index, padded with empty strings if necessary
+                              while (newAliases.length <= index) {
+                                newAliases.push("");
+                              }
+                              newAliases[index] = e.target.value.trim();
+                              // Filter out empty strings at the end, but keep initial empty strings if user is editing them
+                              // This logic ensures that if a user clears an input, it becomes an empty string in the array
+                              // and then we filter out truly empty aliases before saving or processing.
+                              // For the state, we want to keep them to represent the input fields.
+                              setPage((prev) => ({
+                                ...prev,
+                                aliases: newAliases.filter(
+                                  (alias) =>
+                                    alias !== "" ||
+                                    newAliases
+                                      .slice(index + 1)
+                                      .some((a) => a !== "")
+                                ),
+                              }));
+                              setHasPendingPageChanges(true);
+                            }}
+                            className="font-mono text-sm"
+                            placeholder={`your-alias-${index + 1}`}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Preferences</h2>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="showWatermark"
-                    name="showWatermark"
-                    checked={page.showWatermark}
-                    onCheckedChange={(checked: boolean) => {
-                      setPage((prev) => ({ ...prev, showWatermark: checked }));
-                      setHasPendingPageChanges(true);
-                    }}
-                  />
-                  <Label
-                    htmlFor="showWatermark"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Show &quot;Made with pmo.lol&quot; watermark on page
-                  </Label>
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold">Preferences</h2>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="showWatermark"
+                      name="showWatermark"
+                      checked={page.showWatermark}
+                      onCheckedChange={(checked: boolean) => {
+                        setPage((prev) => ({
+                          ...prev,
+                          showWatermark: checked,
+                        }));
+                        setHasPendingPageChanges(true);
+                      }}
+                    />
+                    <Label
+                      htmlFor="showWatermark"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Show &quot;Made with pmo.lol&quot; watermark on page
+                    </Label>
+                  </div>
                 </div>
               </div>
-            </div>
+            </TabsContent>
+          </Tabs>
+        </div>
 
-            <PreviewSection
-              page={page}
-              contentBlocks={contentBlocks}
-              previewUrl={previewUrl}
-              rootUrl={rootUrl}
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
+        {/* Right column - Preview */}
+        <PreviewSection
+          page={page}
+          contentBlocks={contentBlocks}
+          previewUrl={previewUrl}
+          rootUrl={rootUrl}
+        />
+      </div>
     </div>
   );
 }
@@ -859,9 +852,9 @@ function SortableContentBlock({
         <CardContent className="p-4">
           <div className="flex items-start gap-2">
             <div className="flex flex-col items-center justify-center h-full self-center">
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-1">
                 {/* Block type indicator with colored badge */}
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center h-8 w-8">
                   {block.type === ContentType.LINK && (
                     <div className="bg-blue-100 text-blue-700 p-1.5 rounded-md border border-blue-200">
                       <LinkIcon className="h-3 w-3" />
@@ -883,10 +876,20 @@ function SortableContentBlock({
                 <button
                   {...attributes}
                   {...listeners}
-                  className="touch-none cursor-grab active:cursor-grabbing p-1.5"
+                  className="touch-none cursor-grab active:cursor-grabbing h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted/50 transition-colors"
                 >
                   <GripVertical className="h-4 w-4 text-gray-600" />
                 </button>
+
+                {/* Delete button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(block.id)}
+                  className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 hover:cursor-pointer"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
 
@@ -995,15 +998,6 @@ function SortableContentBlock({
                 </div>
               )}
             </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onDelete(block.id)}
-              className="text-destructive hover:text-destructive hover:bg-destructive/10 hover:cursor-pointer "
-            >
-              <Trash2 className="h-5 w-5" />
-            </Button>
           </div>
         </CardContent>
       </Card>
