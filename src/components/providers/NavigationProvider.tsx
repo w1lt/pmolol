@@ -107,7 +107,7 @@ export function NavigationProvider({
                 setIsNavigating(false);
                 setIsFading(false);
                 setProgress(0);
-              }, 500);
+              }, 300);
             }, 600);
 
             return 100;
