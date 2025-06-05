@@ -42,7 +42,7 @@ export function NavigationProvider({
       progressTimerRef.current = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) return 90; // Cap at 90% until completion
-          return prev + 10;
+          return prev + 5;
         });
       }, 200);
     };
@@ -108,14 +108,14 @@ export function NavigationProvider({
                 setIsFading(false);
                 setProgress(0);
               }, 300);
-            }, 600);
+            }, 500);
 
             return 100;
           }
-          // Fast completion - bigger jumps, faster interval
-          return Math.min(prev + 30, 100); // 20% jumps
+          // Very fast completion - bigger jumps, faster interval
+          return Math.min(prev + 30, 100); // 30% jumps (was 20%)
         });
-      }, 50); // Very fast 50ms intervals for completion
+      }, 30); // Super fast 30ms intervals (was 50ms)
 
       return () => clearInterval(completeInterval);
     }
