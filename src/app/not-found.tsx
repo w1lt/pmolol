@@ -27,7 +27,7 @@ export default function NotFound() {
 
         <div className="space-y-3">
           <Button asChild size="lg" className="w-full group">
-            <Link href="/signin">
+            <Link href="/">
               Claim pmo.lol/{slug}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>

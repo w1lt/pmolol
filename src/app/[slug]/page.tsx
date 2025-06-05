@@ -29,7 +29,8 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const page = await prisma.page.findUnique({
+  // First check the direct slug
+  let page = await prisma.page.findUnique({
     where: {
       slug: params.slug,
     },
@@ -39,9 +40,31 @@ export async function generateMetadata({
     },
   });
 
+  // If not found, check if it's an alias
+  if (!page) {
+    page = await prisma.page.findFirst({
+      where: {
+        aliases: {
+          has: params.slug,
+        },
+      },
+      select: {
+        title: true,
+        description: true,
+      },
+    });
+  }
+
+  if (!page) {
+    return {
+      title: "pmo.lol",
+      description: "This page doesn't exist",
+    };
+  }
+
   return {
-    title: `${page?.title}`,
-    description: page?.description,
+    title: `${page.title}`,
+    description: page.description,
   };
 }
 
