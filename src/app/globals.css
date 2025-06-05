@@ -115,28 +115,4 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
-
-  /* Native macOS scrollbar behavior */
-  * {
-    scrollbar-width: auto; /* Firefox */
-    scrollbar-color: auto; /* Firefox */
-  }
-
-  /* WebKit (Chrome/Safari) scrollbars */
-  ::-webkit-scrollbar {
-    width: auto;
-    height: auto;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: auto;
-    border-radius: auto;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: auto;
-  }
 }
