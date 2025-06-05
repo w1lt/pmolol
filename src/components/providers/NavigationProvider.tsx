@@ -25,30 +25,7 @@ export function NavigationProvider({
   const [isFading, setIsFading] = useState(false);
   const [previousPathname, setPreviousPathname] = useState("");
   const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const timeoutTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const initialProgressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
-
-  const resetNavigation = () => {
-    setIsNavigating(false);
-    setIsFading(false);
-    setProgress(0);
-    setPreviousPathname("");
-
-    // Clear all timers
-    if (progressTimerRef.current) {
-      clearInterval(progressTimerRef.current);
-      progressTimerRef.current = null;
-    }
-    if (timeoutTimerRef.current) {
-      clearTimeout(timeoutTimerRef.current);
-      timeoutTimerRef.current = null;
-    }
-    if (initialProgressTimerRef.current) {
-      clearInterval(initialProgressTimerRef.current);
-      initialProgressTimerRef.current = null;
-    }
-  };
 
   useEffect(() => {
     const handleStart = () => {
@@ -60,41 +37,19 @@ export function NavigationProvider({
       if (progressTimerRef.current) {
         clearInterval(progressTimerRef.current);
       }
-      if (timeoutTimerRef.current) {
-        clearTimeout(timeoutTimerRef.current);
-      }
-      if (initialProgressTimerRef.current) {
-        clearInterval(initialProgressTimerRef.current);
-      }
 
-      // Set 10-second timeout to reset navigation
-      timeoutTimerRef.current = setTimeout(() => {
-        resetNavigation();
-      }, 10000);
+      // Quick jump to 20% immediately
+      setTimeout(() => {
+        setProgress(20);
 
-      // Quick initial progress to 20% (4% every 50ms = 20% in 250ms)
-      initialProgressTimerRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 20) {
-            // Clear initial timer and start regular timer
-            if (initialProgressTimerRef.current) {
-              clearInterval(initialProgressTimerRef.current);
-              initialProgressTimerRef.current = null;
-            }
-
-            // Start regular progress timer from 20%
-            progressTimerRef.current = setInterval(() => {
-              setProgress((prev) => {
-                if (prev >= 90) return 90; // Cap at 90% until completion
-                return prev + 5;
-              });
-            }, 200);
-
-            return 20;
-          }
-          return prev + 4; // Quick 4% increments
-        });
-      }, 50); // Fast 50ms intervals for initial progress
+        // Then continue with regular increments
+        progressTimerRef.current = setInterval(() => {
+          setProgress((prev) => {
+            if (prev >= 90) return 90; // Cap at 90% until completion
+            return prev + 5;
+          });
+        }, 200);
+      }, 50);
     };
 
     const handleLinkClick = (e: MouseEvent) => {
@@ -125,12 +80,6 @@ export function NavigationProvider({
       if (progressTimerRef.current) {
         clearInterval(progressTimerRef.current);
       }
-      if (timeoutTimerRef.current) {
-        clearTimeout(timeoutTimerRef.current);
-      }
-      if (initialProgressTimerRef.current) {
-        clearInterval(initialProgressTimerRef.current);
-      }
       document.removeEventListener("click", handleLinkClick, true);
     };
   }, []);
@@ -148,32 +97,32 @@ export function NavigationProvider({
         progressTimerRef.current = null;
       }
 
-      // Clear the initial progress timer if it's still running
-      if (initialProgressTimerRef.current) {
-        clearInterval(initialProgressTimerRef.current);
-        initialProgressTimerRef.current = null;
-      }
+      // Fast completion animation - race to 100%
+      const completeInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(completeInterval);
 
-      // Clear the timeout timer since navigation is completing
-      if (timeoutTimerRef.current) {
-        clearTimeout(timeoutTimerRef.current);
-        timeoutTimerRef.current = null;
-      }
+            // Show 100% briefly, then start fade
+            setTimeout(() => {
+              setIsFading(true);
 
-      // Immediately set progress to 100%
-      setProgress(100);
+              // Reset after fade completes
+              setTimeout(() => {
+                setIsNavigating(false);
+                setIsFading(false);
+                setProgress(0);
+              }, 300);
+            }, 500);
 
-      // Show 100% briefly, then start fade
-      setTimeout(() => {
-        setIsFading(true);
+            return 100;
+          }
+          // Very fast completion - bigger jumps, faster interval
+          return Math.min(prev + 30, 100); // 30% jumps (was 20%)
+        });
+      }, 30); // Super fast 30ms intervals (was 50ms)
 
-        // Reset after fade completes
-        setTimeout(() => {
-          setIsNavigating(false);
-          setIsFading(false);
-          setProgress(0);
-        }, 300);
-      }, 500);
+      return () => clearInterval(completeInterval);
     }
   }, [pathname, isNavigating, previousPathname]);
 

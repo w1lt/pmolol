@@ -18,10 +18,7 @@ import { NavigationProgress } from "./NavigationProgress";
 import { GetStartedButton } from "@/components/auth/GetStartedButton";
 import { useEffect, useState, useRef } from "react";
 
-// Use hysteresis (different thresholds) to prevent jitter
-const COLLAPSE_THRESHOLD = 20; // Scroll down this much to collapse
-const EXPAND_THRESHOLD = 10; // Scroll up to this position to expand
-const MIN_SCROLL_CHANGE = 2; // Ignore tiny scroll movements
+// Simple scroll detection with timeout to prevent jitter
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -29,30 +26,32 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isLoading = status === "loading";
   const lastScrollYRef = useRef(0);
+  const lastChangeTimeRef = useRef(0);
 
   useEffect(() => {
     // Initialize with current scroll position
     lastScrollYRef.current = window.scrollY;
-    setIsScrolled(window.scrollY > COLLAPSE_THRESHOLD);
+    setIsScrolled(window.scrollY > 0);
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      const scrollDiff = Math.abs(currentScrollY - lastScrollYRef.current);
+      const now = Date.now();
 
-      // Only process if movement is significant enough
-      if (scrollDiff >= MIN_SCROLL_CHANGE) {
-        // Use different thresholds based on current state (hysteresis)
-        if (!isScrolled && currentScrollY > COLLAPSE_THRESHOLD) {
-          // Scrolling down past threshold - collapse header
+      // Check if enough time has passed since last state change (500ms debounce)
+      if (now - lastChangeTimeRef.current >= 250) {
+        if (!isScrolled && currentScrollY > 0) {
+          // Any scroll from top - collapse header
           setIsScrolled(true);
-        } else if (isScrolled && currentScrollY <= EXPAND_THRESHOLD) {
-          // Scrolling up to very top - expand header
+          lastChangeTimeRef.current = now;
+        } else if (isScrolled && currentScrollY === 0) {
+          // Back at the very top - expand header
           setIsScrolled(false);
+          lastChangeTimeRef.current = now;
         }
-
-        // Always update last position for next comparison
-        lastScrollYRef.current = currentScrollY;
       }
+
+      // Always update last position for next comparison
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
