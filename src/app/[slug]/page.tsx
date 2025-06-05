@@ -39,16 +39,9 @@ export async function generateMetadata({
     },
   });
 
-  if (!page) {
-    return {
-      title: "Page Not Found - pmo.lol",
-      description: "This page doesn't exist",
-    };
-  }
-
   return {
-    title: `${page.title}`,
-    description: page.description,
+    title: `${page?.title}`,
+    description: page?.description,
   };
 }
 

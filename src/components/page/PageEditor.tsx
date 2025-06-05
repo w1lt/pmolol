@@ -908,7 +908,7 @@ function SortableContentBlock({
                       variant="outline"
                       size="icon"
                       onClick={() => setIsIconPickerOpen(true)}
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 hover:cursor-pointer"
                       title={block.icon ? `Icon: ${block.icon}` : "Choose Icon"}
                     >
                       <Suspense
