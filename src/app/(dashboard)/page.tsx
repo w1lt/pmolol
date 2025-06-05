@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Link as LinkIcon, BarChart3, Globe } from "lucide-react";
 import React, { useMemo, useCallback, useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { loadSlim } from "tsparticles-slim";
@@ -18,6 +20,8 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [pageSlug, setPageSlug] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
+  const { openModal } = useAuthModal();
 
   useEffect(() => {
     const currentUsername = usernames[currentIndex];
@@ -131,7 +135,13 @@ export default function Home() {
   );
 
   const handleCreatePage = () => {
-    // For now, just go to edit page. Later this can check auth and redirect accordingly
+    if (!session?.user) {
+      // User not logged in, open auth modal
+      openModal();
+      return;
+    }
+
+    // User is logged in, proceed to edit page
     router.push("/edit");
   };
 
@@ -166,9 +176,9 @@ export default function Home() {
 
           <div className="flex flex-col items-center justify-center gap-6 pt-4">
             {/* URL Input Section */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
-              <div className="relative w-full">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg pointer-events-none opacity-90">
+            <div className="flex flex-row items-center gap-3 w-full max-w-sm">
+              <div className="relative flex-1 min-w-0">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm sm:text-lg pointer-events-none opacity-90">
                   pmo.lol/
                 </span>
                 <Input
@@ -177,17 +187,17 @@ export default function Home() {
                   value={pageSlug}
                   onChange={(e) => setPageSlug(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  className="text-lg px-4 py-3 pl-20 h-12 bg-background border border-border rounded-lg shadow-lg"
+                  className="text-sm sm:text-lg px-3 sm:px-4 py-3 pl-19 sm:pl-19 h-12 bg-background border border-border rounded-lg shadow-lg"
                 />
               </div>
               <Button
                 size="lg"
                 onClick={handleCreatePage}
                 disabled={!pageSlug.trim()}
-                className="h-12 px-4 text-lg group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-12 px-3 sm:px-4 text-sm sm:text-lg group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 Claim
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
 

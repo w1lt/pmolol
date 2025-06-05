@@ -8,11 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getInitials } from "@/lib/utils";
-import { ArrowRight, User, LogOut, BarChart, Edit } from "lucide-react";
+import { User, LogOut, BarChart, Edit } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { HeaderNavigation } from "./HeaderNavigation";
 import { NavigationProgress } from "./NavigationProgress";
+import { GetStartedButton } from "@/components/auth/GetStartedButton";
 
 export async function Header() {
   const session = await getServerSession(authOptions);
@@ -100,13 +101,7 @@ export async function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link
-                href="/signin"
-                className="group inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg shadow-sm border border-border hover:bg-primary/10 hover:shadow-md"
-              >
-                Get Started
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <GetStartedButton useModal={true} />
             )}
           </div>
         </div>
