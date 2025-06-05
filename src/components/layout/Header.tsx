@@ -5,13 +5,15 @@ import { ArrowRight } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { HeaderNavigation } from "./HeaderNavigation";
+import { NavigationProgress } from "./NavigationProgress";
 
 export async function Header() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
   return (
-    <header className="relative z-50 w-full">
+    <header className="sticky top-0 z-50 w-full">
+      <NavigationProgress />
       <div className="container mx-auto px-4 py-4">
         <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <Link
