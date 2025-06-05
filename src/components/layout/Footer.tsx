@@ -15,7 +15,7 @@ export function Footer() {
               pmo.lol
             </Link>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} pmo.lol. All rights reserved.
+              © {new Date().getFullYear()} pmo.lol - All rights reserved.
             </p>
           </div>
 

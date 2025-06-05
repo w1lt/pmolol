@@ -22,7 +22,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 w-full">
       <NavigationProgress />
       <div className="container mx-auto px-4 py-4">
-        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border rounded-2xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+        <div className="flex h-16 items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border hover:border-primary/20 rounded-2xl shadow-sm transition-all duration-300">
           <Link
             href="/"
             className="font-bold text-xl hover:text-primary transition-colors duration-200"
@@ -42,7 +42,7 @@ export async function Header() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="group focus:outline-none">
-                    <Avatar className="h-8 w-8 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-200 group-hover:scale-105 cursor-pointer">
+                    <Avatar className="h-8 w-8 ring-2 ring-transparent group-hover:ring-primary/20 cursor-pointer">
                       <AvatarImage
                         src={user.image || ""}
                         alt={user.name || "User"}
