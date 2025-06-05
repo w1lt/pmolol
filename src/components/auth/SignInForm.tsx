@@ -27,7 +27,7 @@ export function SignInForm() {
         type="button"
         disabled={isLoading}
         onClick={signInWithGoogle}
-        className="w-full"
+        className="w-full hover:cursor-pointer"
       >
         {isLoading ? (
           <div className="flex items-center gap-2">

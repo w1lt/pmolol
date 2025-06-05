@@ -161,12 +161,10 @@ export default function Home() {
           </h1>
 
           <p className="text-xl md:text-2xl leading-relaxed text-muted-foreground max-w-3xl mx-auto">
-            Create a stunning, personalized link page that reflects your unique
-            style. Share all your important links in one beautiful, customizable
-            space.
+            Create a free, personalized link page in seconds.
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-6 pt-8">
+          <div className="flex flex-col items-center justify-center gap-6 pt-4">
             {/* URL Input Section */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
               <div className="relative w-full">
@@ -186,7 +184,7 @@ export default function Home() {
                 size="lg"
                 onClick={handleCreatePage}
                 disabled={!pageSlug.trim()}
-                className="h-12 px-4 text-lg font-semibold group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-12 px-4 text-lg group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Claim
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
