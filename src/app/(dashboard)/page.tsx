@@ -19,6 +19,7 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pageSlug, setPageSlug] = useState("");
+  const [particlesVisible, setParticlesVisible] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
   const { openModal } = useAuthModal();
@@ -49,6 +50,15 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, [currentText, currentIndex, isDeleting]);
+
+  useEffect(() => {
+    // Trigger particles fade-in after component mount
+    const timer = setTimeout(() => {
+      setParticlesVisible(true);
+    }, 100); // Small delay to ensure smooth fade-in
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     console.log("Particles engine initializing:", engine);
@@ -154,7 +164,9 @@ export default function Home() {
         init={particlesInit}
         loaded={particlesLoaded}
         options={options}
-        className="fixed top-0 left-0 w-full h-full z-[-1]"
+        className={`fixed top-0 left-0 w-full h-full z-[-1] transition-opacity duration-500 ${
+          particlesVisible ? "opacity-100" : "opacity-0"
+        }`}
       />
 
       <div className="relative z-10 flex flex-col items-center justify-center py-12">
