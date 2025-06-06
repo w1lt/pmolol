@@ -112,8 +112,8 @@ export function NavigationProvider({
                 setIsNavigating(false);
                 setIsFading(false);
                 setProgress(0);
-              }, 300);
-            }, 500);
+              }, 250);
+            }, 450);
 
             return 100;
           }
