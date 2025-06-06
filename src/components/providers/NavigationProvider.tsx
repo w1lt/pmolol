@@ -117,10 +117,10 @@ export function NavigationProvider({
 
             return 100;
           }
-          // Very fast completion - bigger jumps, faster interval
-          return Math.min(prev + 30, 100); // 30% jumps (was 20%)
+          // Ultra fast completion - bigger jumps, faster interval
+          return Math.min(prev + 50, 100); // 50% jumps for rapid completion
         });
-      }, 30); // Super fast 30ms intervals (was 50ms)
+      }, 15); // Ultra fast 15ms intervals
 
       return () => clearInterval(completeInterval);
     }
