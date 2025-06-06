@@ -69,10 +69,6 @@ export default function Home() {
       fpsLimit: 60,
       interactivity: {
         events: {
-          onClick: {
-            enable: true,
-            mode: "push",
-          },
           onHover: {
             enable: true,
             mode: "repulse",
@@ -109,7 +105,7 @@ export default function Home() {
             default: "bounce",
           },
           random: false,
-          speed: 1.5,
+          speed: 1.25,
           straight: false,
         },
         number: {
@@ -123,10 +119,10 @@ export default function Home() {
           value: 0.2,
         },
         shape: {
-          type: "triangle",
+          type: "circle",
         },
         size: {
-          value: { min: 1, max: 4 },
+          value: { min: 1, max: 3.5 },
         },
       },
       detectRetina: true,
@@ -194,10 +190,10 @@ export default function Home() {
                 size="lg"
                 onClick={handleCreatePage}
                 disabled={!pageSlug.trim()}
-                className="h-12 px-3 sm:px-4 text-sm sm:text-lg group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="h-12 px-3 sm:px-4 text-sm sm:text-md group hover:cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 Claim
-                <ArrowRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-1 sm:ml-1 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
 
